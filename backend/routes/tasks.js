@@ -2,6 +2,7 @@ const router = require('express').Router();
 const auth = require('../middleware/authMiddleware');
 const Task = require('../models/Task');
 const User = require('../models/User');
+const ActionLog = require('../models/ActionLog');
 
 module.exports = (io) => {
   // Get all tasks
@@ -36,6 +37,8 @@ module.exports = (io) => {
     });
 
     io.emit('task:created', task);
+    await ActionLog.create({ actionType: 'create', task: task._id, user: req.user.id });
+    io.emit('log:update', { actionType: 'create', taskId: task._id , userId: req.user.id });
 
     res.json(task);
   } catch (err) {
@@ -76,6 +79,9 @@ module.exports = (io) => {
       Object.assign(task, req.body, { updatedAt: new Date() });
       await task.save();
       io.emit('task:updated', task);
+      await ActionLog.create({ actionType: 'update', task: task._id, user: req.user.id });
+      io.emit('log:update', { actionType: 'update', taskId: task._id, userId: req.user.id });
+
       res.json(task);
     } catch (err) {
       res.status(400).json({ error: err.message });
@@ -87,8 +93,13 @@ module.exports = (io) => {
     const task = await Task.findByIdAndDelete(req.params.id);
     if (!task) return res.status(404).json({ message: 'Not found' });
     io.emit('task:deleted', { id: req.params.id });
+    await ActionLog.create({ actionType: 'delete', task: task._id, user: req.user.id });
+    io.emit('log:update', { actionType: 'delete', taskId: task._id, userId: req.user.id });
+
     res.json({ message: 'Deleted' });
   });
+
+
 
   // Smart assign
   router.post('/:id/smart-assign', auth, async (req, res) => {
@@ -130,6 +141,8 @@ module.exports = (io) => {
     await task.save();
 
     io.emit('task:updated', task);
+    await ActionLog.create({ actionType: 'smart-assign', task: task._id, user: req.user.id });
+    io.emit('log:update', { actionType: 'smart-assign', taskId: task._id, userId: req.user.id });
     res.json(task);
 } catch (err) {
     console.error('Error in smart assign:', err);

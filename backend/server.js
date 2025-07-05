@@ -7,6 +7,7 @@ const socketio = require('socket.io');
 
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
+const logRoutes = require('./routes/logs');
 
 const app = express();
 const server = http.createServer(app);
@@ -19,6 +20,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes(io));
+app.use('/api/logs', logRoutes);
 // DB + server
 mongoose.connect(process.env.MONGO_URI)
   .then(() => server.listen(process.env.PORT || 5000, () => console.log('Server running')))
