@@ -6,6 +6,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import VerifyOtp from './components/Auth/VerifyOtp';
 import LandingPage from './components/LandingPage';
+import KanbanBoard from './components/KanbanBoard';
 
 const App = () => (
   <AuthProvider>
@@ -16,6 +17,7 @@ const App = () => (
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/kanban" element={<KanbanBoard />} />
       </Routes>
     </Router>
   </AuthProvider>

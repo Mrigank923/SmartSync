@@ -1,0 +1,29 @@
+.kanban-board {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.kanban-column {
+  flex: 1;
+  min-width: 250px;
+  background: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.kanban-column h3 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .kanban-board {
+    flex-direction: column;
+  }
+}
+
+.kanban-container {
+  padding: 20px;
+}

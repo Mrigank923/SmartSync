@@ -1,0 +1,34 @@
+.task-card {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  cursor: grab;
+}
+
+.task-card h4 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.task-card p {
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.priority {
+  font-weight: bold;
+}
+
+.priority-low {
+  border-left: 4px solid green;
+}
+
+.priority-medium {
+  border-left: 4px solid orange;
+}
+
+.priority-high {
+  border-left: 4px solid red;
+}
