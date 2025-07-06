@@ -1,7 +1,7 @@
 import React from 'react';
 import './TaskCard.css';
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, onEdit, onSmartAssign, onDelete }) => {
   const dragStart = (e) => {
     e.dataTransfer.setData('id', task._id);
   };
@@ -15,6 +15,11 @@ const TaskCard = ({ task }) => {
       <h4>{task.title}</h4>
       <p>{task.description}</p>
       <p className="priority">{task.priority}</p>
+      <div className="card-actions">
+        <button onClick={() => onEdit(task)}>✏️ Edit</button>
+        <button onClick={() => onSmartAssign(task)}>🤖 Smart Assign</button>
+        <button onClick={() => onDelete(task)}>🗑️ Delete</button>
+      </div>
     </div>
   );
 };

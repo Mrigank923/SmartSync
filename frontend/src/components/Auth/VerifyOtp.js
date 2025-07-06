@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import './VerifyOtp.css';
 
 const VerifyOtp = () => {
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [email, setEmail] = useState('');
+  const inputsRef = useRef([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,10 +19,27 @@ const VerifyOtp = () => {
     }
   }, [navigate]);
 
-  const handleVerify = async (e) => {
+  const handleChange = (index, value) => {
+    if (!/^\d?$/.test(value)) return; // Only allow digits
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+    if (value && index < 5) {
+      inputsRef.current[index + 1].focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputsRef.current[index - 1].focus();
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/auth/verify-otp', { email, otp });
+      const finalOtp = otp.join('');
+      await api.post('/auth/verify-otp', { email, otp: finalOtp });
       alert('Email verified! Please login.');
       localStorage.removeItem('pendingEmail');
       navigate('/login');
@@ -31,16 +49,22 @@ const VerifyOtp = () => {
   };
 
   return (
-    <form className="auth-form" onSubmit={handleVerify}>
+    <form className="auth-form" onSubmit={handleSubmit}>
       <h2>Verify OTP</h2>
-      <p>We sent an OTP to: <strong>{email}</strong></p>
-      <input
-        type="text"
-        value={otp}
-        placeholder="Enter OTP"
-        onChange={e => setOtp(e.target.value)}
-        required
-      />
+      <p>Sent to: <strong>{email}</strong></p>
+      <div className="otp-boxes">
+        {otp.map((digit, idx) => (
+          <input
+            key={idx}
+            ref={el => inputsRef.current[idx] = el}
+            type="text"
+            maxLength="1"
+            value={digit}
+            onChange={(e) => handleChange(idx, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(idx, e)}
+          />
+        ))}
+      </div>
       <button type="submit">Verify</button>
     </form>
   );

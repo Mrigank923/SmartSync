@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import './Register.css';
 
+
 const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -39,13 +41,13 @@ const Register = () => {
         onChange={e => setEmail(e.target.value)}
         required
       />
-      <input
-        type="password"
+     <input
+        type={showPassword ? 'text' : 'password'}
         value={password}
         placeholder="Password"
         onChange={e => setPassword(e.target.value)}
         required
-      />
+        />
       <button type="submit">Register</button>
     </form>
   );
