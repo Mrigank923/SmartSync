@@ -1,22 +1,50 @@
 import React from 'react';
 import './ConflictModal.css';
 
-const ConflictModal = ({ serverVersion, clientVersion, onResolve }) => {
+const ConflictModal = ({ serverVersion, clientVersion, onMerge, onOverwrite, onCancel }) => {
+  if (!serverVersion || !clientVersion) {
+    return (
+      <div className="modal-backdrop">
+        <div className="modal-content">
+          <p>Loading conflict data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
         <h3>Conflict Detected</h3>
+
         <div className="modal-section">
           <h4>Server Version</h4>
-          <pre>{JSON.stringify(serverVersion, null, 2)}</pre>
+          <p><strong>Title:</strong> {serverVersion.title || 'N/A'}</p>
+          <p><strong>Description:</strong> {serverVersion.description || 'N/A'}</p>
+          <p><strong>Priority:</strong> {serverVersion.priority || 'N/A'}</p>
+          <p><strong>Status:</strong> {serverVersion.status || 'N/A'}</p>
+          <details>
+            <summary>Raw Data</summary>
+            <pre>{JSON.stringify(serverVersion, null, 2)}</pre>
+          </details>
         </div>
+
         <div className="modal-section">
           <h4>Your Version</h4>
-          <pre>{JSON.stringify(clientVersion, null, 2)}</pre>
+          <p><strong>Title:</strong> {clientVersion.title || 'N/A'}</p>
+          <p><strong>Description:</strong> {clientVersion.description || 'N/A'}</p>
+          <p><strong>Priority:</strong> {clientVersion.priority || 'N/A'}</p>
+          <p><strong>Status:</strong> {clientVersion.status || 'N/A'}</p>
+          <details>
+            <summary>Raw Data</summary>
+            <pre>{JSON.stringify(clientVersion, null, 2)}</pre>
+          </details>
         </div>
+
         <div className="modal-buttons">
-          <button onClick={() => onResolve('merge')}>Merge</button>
-          <button onClick={() => onResolve('overwrite')}>Overwrite</button>
+          <button onClick={onMerge}>🔀 Merge</button>
+          <button onClick={onOverwrite}>⚠️ Overwrite</button>
+          <button onClick={onCancel} className="cancel-btn">❌ Cancel</button>
         </div>
       </div>
     </div>

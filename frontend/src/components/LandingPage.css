@@ -1,58 +1,112 @@
-.landing-container {
-  text-align: center;
+.landing-wrapper {
+  font-family: sans-serif;
   padding: 40px 20px;
+  max-width: 1200px;
+  margin: auto;
 }
 
-.landing-container h1 {
-  font-size: 36px;
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+.hero-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.hero-text h1 {
+  font-size: 48px;
+  color: #333;
+}
+
+.hero-text .brand {
   color: #007bff;
+}
+
+.hero-text .tagline {
+  font-size: 20px;
+  color: #555;
   margin-bottom: 10px;
 }
 
-.landing-container p {
-  font-size: 18px;
-  color: #555;
-  margin-bottom: 30px;
+.hero-text .description {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
-.landing-options {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-}
-
-.option-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px;
-  width: 200px;
-  transition: box-shadow 0.3s;
-  background: white;
+.hero-buttons button {
+  margin-right: 10px;
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
   cursor: pointer;
 }
 
-.option-card img {
-  width: 80px;
-  margin-bottom: 10px;
+.hero-buttons button:hover {
+  background: #0056b3;
 }
 
-.option-card button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
+.hero-image {
+  flex: 1;
+  min-width: 300px;
+}
+
+.hero-image img {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.feature {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.feature img {
+  width: 200px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.feature h3 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.feature p {
   font-size: 16px;
+  color: #555;
 }
 
-.option-card:hover {
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-@media (max-width: 600px) {
-  .landing-options {
+@media (max-width: 768px) {
+  .hero {
     flex-direction: column;
-    align-items: center;
+    text-align: center;
+  }
+
+  .feature {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-buttons button {
+    margin: 5px 0;
   }
 }

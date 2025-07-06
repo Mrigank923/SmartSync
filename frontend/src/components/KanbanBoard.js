@@ -4,12 +4,13 @@ import { socket } from '../services/socket';
 import TaskCard from './TaskCard';
 import './KanbanBoard.css';
 import TaskModal from './TaskModal';
-
+import Toast from './Toast';
 
 const KanbanBoard = () => {
   const [tasks, setTasks] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editTask, setEditTask] = useState(null);
+  const [toast, setToast] = useState(null);
 
  
   useEffect(() => {
@@ -45,9 +46,9 @@ const KanbanBoard = () => {
   const handleSmartAssign = async (task) => {
     try {
       await api.post(`/tasks/${task._id}/smart-assign`);
-      alert('Smart assign successful!');
+        setToast({ message: 'Smart assign successful!', type: 'success' });
     } catch {
-      alert('Smart assign failed');
+      setToast({ message: 'Smart assign failed', type: 'error' });
     }
   };
 
@@ -72,6 +73,7 @@ const KanbanBoard = () => {
 
   return (
     <div className="kanban-container">
+        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <button className="add-task-btn" onClick={() => {
         setEditTask(null);
         setShowModal(true);
