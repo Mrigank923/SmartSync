@@ -16,7 +16,7 @@ const Login = () => {
       const res = await api.post('/auth/login', { email, password });
       setToken(res.data.token);
       setUser(res.data.user);
-      navigate('/');  // Go to board
+      navigate('/kanban');  // Go to board
     } catch (err) {
       alert(err.response?.data?.message || 'Login failed');
     }
