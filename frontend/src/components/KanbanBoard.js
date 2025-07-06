@@ -4,10 +4,12 @@ import { socket } from '../services/socket';
 import TaskCard from './TaskCard';
 import './KanbanBoard.css';
 import TaskForm from './TaskForm';
+import ConflictModal from './ConflictModal';
+
 
 const KanbanBoard = () => {
   const [tasks, setTasks] = useState([]);
-
+  const [conflict, setConflict] = useState(null);
   useEffect(() => {
     loadTasks();
 
@@ -36,9 +38,21 @@ const KanbanBoard = () => {
     const id = e.dataTransfer.getData('id');
     const task = tasks.find(t => t._id === id);
     if (task.status !== status) {
+       try {
       await api.put(`/tasks/${id}`, { status, updatedAt: task.updatedAt });
+    } catch (err) {
+      if (err.response?.status === 409) {
+        setConflict({
+          server: err.response.data.serverVersion,
+          client: { ...task, status }
+        });
+      } else {
+        console.error(err);
+      }
+    }
     }
   };
+
 
   const allowDrop = (e) => e.preventDefault();
 
@@ -63,6 +77,27 @@ const KanbanBoard = () => {
         {renderColumn('In Progress')}
         {renderColumn('Done')}
       </div>
+      {conflict && (
+  <ConflictModal
+    serverVersion={conflict.server}
+    clientVersion={conflict.client}
+    onResolve={async (action) => {
+      if (action === 'overwrite') {
+        try {
+          await api.put(`/tasks/${conflict.client._id}`, {
+            ...conflict.client,
+            updatedAt: conflict.server.updatedAt
+          });
+        } catch (e) {
+          console.error("Failed to overwrite:", e);
+        }
+      }
+      // Handle merge or cancel as needed
+      setConflict(null);
+    }}
+  />
+)}
+
     </div>
   );
 };
