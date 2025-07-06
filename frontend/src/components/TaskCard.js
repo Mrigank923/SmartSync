@@ -13,8 +13,17 @@ const TaskCard = ({ task, onEdit, onSmartAssign, onDelete }) => {
       onDragStart={dragStart}
     >
       <h4>{task.title}</h4>
-      <p>{task.description}</p>
-      <p className="priority">{task.priority}</p>
+      <p className="description">{task.description}</p>
+      
+      <p className="assigned-user">
+        Assigned to: 
+        <strong>
+          {task.assignedUser?.username || task.assignedUser?.name || 'Not assigned'}
+        </strong>
+      </p>
+
+      <p className="priority-badge">{task.priority}</p>
+
       <div className="card-actions">
         <button onClick={() => onEdit(task)}>✏️ Edit</button>
         <button onClick={() => onSmartAssign(task)}>🤖 Smart Assign</button>

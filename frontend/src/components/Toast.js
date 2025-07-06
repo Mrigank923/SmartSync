@@ -3,7 +3,7 @@ import './Toast.css';
 
 const Toast = ({ message, type = 'info', onClose }) => {
   useEffect(() => {
-    const timer = setTimeout(onClose, 3000);  // Auto-close after 3 sec
+    const timer = setTimeout(onClose, 3000);
     return () => clearTimeout(timer);
   }, [onClose]);
 

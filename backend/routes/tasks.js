@@ -23,7 +23,7 @@ module.exports = (io) => {
     }
 
     // Check uniqueness of each title
-    const existing = await Task.findOne({ title: title.trim() });
+    const existing = await Task.findOne({ title: title.trim() , status: status });
     if (existing) {
       return res.status(400).json({ message: 'Task title must be unique' });
     }
@@ -69,7 +69,7 @@ module.exports = (io) => {
 
       // Check uniqueness if title changed
       if (req.body.title.trim() !== task.title) {
-        const existing = await Task.findOne({ title: req.body.title.trim() });
+        const existing = await Task.findOne({ title: req.body.title.trim() , status: req.body.status });
         if (existing) {
           return res.status(400).json({ message: 'Task title must be unique' });
         }

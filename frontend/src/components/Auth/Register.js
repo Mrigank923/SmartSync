@@ -2,54 +2,69 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import './Register.css';
-
+import Toast from '../Toast';
 
 const Register = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [toast, setToast] = useState(null);
 
-  const handleRegister = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await api.post('/auth/register', { username, email, password });
-      alert('Registered! Please check your email for OTP.');
+      setToast({ message: 'Registered! Please check your email for OTP.', type: 'success' });
       localStorage.setItem('pendingEmail', email);
       navigate('/verify-otp');
-
     } catch (err) {
-      alert(err.response?.data?.message || 'Registration failed');
+      setToast({ message: err.response?.data?.message || 'Registration failed', type: 'error' });
     }
   };
 
   return (
-    <form className="auth-form" onSubmit={handleRegister}>
-      <h2>Register</h2>
-      <input
-        type="text"
-        value={username}
-        placeholder="Username"
-        onChange={e => setUsername(e.target.value)}
-        required
-      />
-      <input
-        type="email"
-        value={email}
-        placeholder="Email"
-        onChange={e => setEmail(e.target.value)}
-        required
-      />
-     <input
-        type={showPassword ? 'text' : 'password'}
-        value={password}
-        placeholder="Password"
-        onChange={e => setPassword(e.target.value)}
-        required
-        />
-      <button type="submit">Register</button>
-    </form>
+    <div className="register-container">
+        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      <h2>Create Your SmartSync Account</h2>
+      <form className="register-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <input
+            type="text"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            required
+          />
+          <label>Username</label>
+        </div>
+
+        <div className="form-group">
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+          <label>Email</label>
+        </div>
+
+        <div className="form-group">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
+          <label>Password</label>
+          <span className="toggle-password" onClick={() => setShowPassword(prev => !prev)}>
+            {showPassword ? '🙈' : '👁️'}
+          </span>
+        </div>
+
+        <button type="submit">Register</button>
+      </form>
+    </div>
   );
 };
 

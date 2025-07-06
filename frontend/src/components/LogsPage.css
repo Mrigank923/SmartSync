@@ -1,0 +1,77 @@
+.logs-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.logs-container h2 {
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+.logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.log-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: white;
+  text-transform: uppercase;
+  min-width: 60px;
+  text-align: center;
+}
+
+.badge-create {
+  background: #28a745;
+}
+
+.badge-update {
+  background: #17a2b8;
+}
+
+.badge-delete {
+  background: #dc3545;
+}
+
+.badge-default {
+  background: #6c757d;
+}
+
+.log-info p {
+  margin: 2px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.log-time {
+  font-size: 12px;
+  color: #888;
+}
+
+.no-logs {
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .log-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

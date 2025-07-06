@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import './VerifyOtp.css';
+import './AuthForms.css';
+import Toast from '../Toast';
 
 const VerifyOtp = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [email, setEmail] = useState('');
   const inputsRef = useRef([]);
   const navigate = useNavigate();
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem('pendingEmail');
     if (!storedEmail) {
-      alert('No pending email found. Please register again.');
+      setToast({ message: 'No pending email found. Please register again.', type: 'error' });
       navigate('/register');
     } else {
       setEmail(storedEmail);
@@ -20,7 +22,7 @@ const VerifyOtp = () => {
   }, [navigate]);
 
   const handleChange = (index, value) => {
-    if (!/^\d?$/.test(value)) return; // Only allow digits
+    if (!/^\d?$/.test(value)) return;
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
@@ -40,33 +42,37 @@ const VerifyOtp = () => {
     try {
       const finalOtp = otp.join('');
       await api.post('/auth/verify-otp', { email, otp: finalOtp });
-      alert('Email verified! Please login.');
+      setToast({ message: 'Email verified! Please login.', type: 'success' });
       localStorage.removeItem('pendingEmail');
       navigate('/login');
     } catch (err) {
-      alert(err.response?.data?.message || 'OTP verification failed');
+      setToast({ message: err.response?.data?.message || 'OTP verification failed', type: 'error' });
     }
   };
 
   return (
-    <form className="auth-form" onSubmit={handleSubmit}>
-      <h2>Verify OTP</h2>
-      <p>Sent to: <strong>{email}</strong></p>
-      <div className="otp-boxes">
-        {otp.map((digit, idx) => (
-          <input
-            key={idx}
-            ref={el => inputsRef.current[idx] = el}
-            type="text"
-            maxLength="1"
-            value={digit}
-            onChange={(e) => handleChange(idx, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(idx, e)}
-          />
-        ))}
-      </div>
-      <button type="submit">Verify</button>
-    </form>
+    <div className="auth-container">
+        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      <h2>Verify Your Email</h2>
+      <p className="otp-email">Sent to: <strong>{email}</strong></p>
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <div className="otp-boxes">
+          {otp.map((digit, idx) => (
+            <input
+              key={idx}
+              ref={el => inputsRef.current[idx] = el}
+              type="text"
+              maxLength="1"
+              value={digit}
+              onChange={e => handleChange(idx, e.target.value)}
+              onKeyDown={e => handleKeyDown(idx, e)}
+              required
+            />
+          ))}
+        </div>
+        <button type="submit">Verify</button>
+      </form>
+    </div>
   );
 };
 
