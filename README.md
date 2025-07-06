@@ -9,7 +9,7 @@ SmartSync is a real-time collaborative task management app inspired by Trello. I
 
 👉 Postman doc: https://www.postman.com/hotel-crew/workspace/public-doc/collection/39313531-9d691121-2a00-4ceb-996f-d84d7bda1ce5?action=share&creator=39313531
 
-👉 Demo Video: Watch the demo
+👉 Demo Video: [Watch the demo](https://drive.google.com/file/d/1xVyKdgQ2kAymDr2wEsbxHhEtyQY9F2rs/view?usp=sharing)
 
 ---
 ## 🚀 Project Overview
