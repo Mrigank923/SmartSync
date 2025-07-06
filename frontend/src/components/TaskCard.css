@@ -1,0 +1,51 @@
+.task-card {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  cursor: grab;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.task-card h4 {
+  font-size: 16px;
+  color: #007bff;
+  margin-bottom: 4px;
+}
+
+.task-card p {
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.priority-low {
+  border-left: 4px solid green;
+}
+
+.priority-medium {
+  border-left: 4px solid orange;
+}
+
+.priority-high {
+  border-left: 4px solid red;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.card-actions button {
+  flex: 1;
+  padding: 4px;
+  font-size: 12px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.card-actions button:hover {
+  opacity: 0.9;
+}

@@ -1,0 +1,28 @@
+.action-log {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.action-log h3 {
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.action-log ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.action-log li {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+@media (max-width: 600px) {
+  .action-log {
+    padding: 8px;
+  }
+}
