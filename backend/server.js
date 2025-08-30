@@ -4,6 +4,8 @@ const mongoose   = require('mongoose');
 const cors       = require('cors');
 const http       = require('http');
 const dotenv     = require('dotenv');
+const swaggerUi  = require('swagger-ui-express');
+const swaggerSpecs = require('./config/swagger');
 const { initSocket } = require('./config/socket');
 
 dotenv.config();
@@ -15,17 +17,23 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(express.json());
 
-// ---- 2. Routes ----
+// ---- 2. Swagger Documentation ----
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'SmartSync API Documentation'
+}));
+
+// ---- 3. Routes ----
 app.use('/api/auth',  require('./routes/authRoutes'));
 app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/rooms', require('./routes/roomRoutes'));
 app.use('/api/logs',  require('./routes/logRoutes'));
 
-// ---- 3. Error handler (last) ----
+// ---- 4. Error handler (last) ----
 const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);
 
-// ---- 4. Connect DB ----
+// ---- 5. Connect DB ----
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -35,7 +43,7 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('❌ MongoDB connection error:', err.message);
 });
 
-// ---- 5. Socket.IO ----
+// ---- 6. Socket.IO ----
 const io = initSocket(server); // attach socket to server
 
 // Register socket listeners
@@ -43,8 +51,8 @@ require('./sockets/taskSockets')(io);     // joinRoom, leaveRoom
 require('./sockets/roomSockets')(io);     // (optional namespace)
 
 
-// ---- 6. Start Server ----
-const PORT = process.env.PORT || 5000;
+// ---- 7. Start Server ----
+const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
