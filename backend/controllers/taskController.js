@@ -10,13 +10,22 @@ const forbiddenTitles = ['Todo', 'In Progress', 'Done'];
 /** GET tasks (personal or room) */
 exports.getTasks = async (req, res, next) => {
   try {
-    const room = req.params.roomId || null;
-    const filter = room
-      ? { room }
-      : { room: null, createdBy: req.user.id };
+    const roomId = req.query.roomId || null;
+    let filter = {};
+    
+    if (roomId) {
+      filter.roomId = roomId;
+    } else {
+      // Personal tasks - tasks without roomId and created by current user
+      filter.roomId = null;
+      filter.createdBy = req.user.id;
+    }
 
     const tasks = await Task.find(filter)
-      .populate('assignedUser', 'username');
+      .populate('assignedUser', 'username')
+      .populate('roomId', 'name')
+      .sort({ createdAt: -1 });
+      
     res.json(tasks);
   } catch (err) { next(err); }
 };
@@ -24,14 +33,18 @@ exports.getTasks = async (req, res, next) => {
 /** POST create task */
 exports.createTask = async (req, res, next) => {
   try {
-    const room = req.params.roomId || null;
-    const { title, description, priority, status, assignedUser } = req.body;
+    const { title, description, priority, status, assignedUser, roomId } = req.body;
 
     if (forbiddenTitles.includes(title.trim()))
       return res.status(400).json({ message: 'Task title cannot match column name' });
-
-    const exists = await Task.findOne({ title: title.trim(), status, room });
-    if (exists) return res.status(400).json({ message: 'Task title must be unique' });
+    
+    if (roomId) {
+      const exists = await Task.findOne({ title: title.trim(), status, roomId });
+      if (exists) return res.status(400).json({ message: 'Task title must be unique' });
+      } else {
+      const exists = await Task.findOne({ title: title.trim(), status, createdBy: req.user.id });
+      if (exists) return res.status(400).json({ message: 'Task title must be unique' });
+    }
 
     const task = await Task.create({
       title: title.trim(),
@@ -39,16 +52,32 @@ exports.createTask = async (req, res, next) => {
       priority,
       status,
       assignedUser: assignedUser || null,
-      room,
+      roomId: roomId || null,
       createdBy: req.user.id
     });
 
-    await ActionLog.create({ actionType: 'create', task: task._id, user: req.user.id, room });
-    if (task.room) {
-    getIO().to(task.room.toString()).emit('task:created', task);
+    await ActionLog.create({ 
+      actionType: 'create', 
+      task: task._id, 
+      user: req.user.id, 
+      room: roomId 
+    });
+    
+     // Emit socket event based on type
+     if (task.roomId) {
+      // Task is linked to a room → broadcast to the room
+      getIO().to(task.roomId.toString()).emit('task:created', task);
+    } else {
+      // Task is personal → emit only to the user’s personal channel
+      getIO().to(req.user.id.toString()).emit('task:created', task);
     }
 
-    res.status(201).json(task);
+    // Populate the task before sending response
+    const populatedTask = await Task.findById(task._id)
+      .populate('assignedUser', 'username')
+      .populate('roomId', 'name');
+
+    res.status(201).json(populatedTask);
   } catch (err) { next(err); }
 };
 
@@ -76,7 +105,7 @@ exports.updateTask = async (req, res, next) => {
         const dup = await Task.findOne({
           title: req.body.title.trim(),
           status: req.body.status,
-          room: task.room
+          roomId: task.roomId || null
         });
         if (dup) return res.status(400).json({ message: 'Task title must be unique' });
       }
@@ -85,67 +114,99 @@ exports.updateTask = async (req, res, next) => {
     Object.assign(task, req.body, { updatedAt: new Date() });
     await task.save();
 
-    await ActionLog.create({ actionType: 'update', task: task._id, user: req.user.id, room: task.room });
-    if (task.room) {
-    getIO().to(task.room.toString()).emit('task:updated', task);
+    await ActionLog.create({ 
+      actionType: 'update', 
+      task: task._id, 
+      user: req.user.id, 
+      room: task.roomId || null 
+    });
+    
+    if (task.roomId) {
+      getIO().to(task.roomId.toString()).emit('task:updated', task);
+    }
+    else {
+      getIO().to(req.user.id.toString()).emit('task:updated', task);
     }
 
-    res.json(task);
+    // Populate the task before sending response
+    const populatedTask = await Task.findById(task._id)
+      .populate('assignedUser', 'username')
+      .populate('roomId', 'name');
+
+    res.json(populatedTask);
   } catch (err) { next(err); }
 };
 
 /** DELETE task */
 exports.deleteTask = async (req, res, next) => {
   try {
-    const task = await Task.findByIdAndDelete(req.params.id);
-    if (!task) return res.status(404).json({ message: 'Not found' });
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found' });
 
-    await ActionLog.create({ actionType: 'delete', task: task._id, user: req.user.id, room: task.room });
-    if (task.room) {
-      getIO().to(task.room.toString()).emit('task:deleted', { id: task._id });
+    await Task.findByIdAndDelete(req.params.id);
+    await ActionLog.create({ 
+      actionType: 'delete', 
+      task: task._id, 
+      user: req.user.id, 
+      room: task.roomId || null 
+    });
+
+    if (task.roomId) {
+      getIO().to(task.roomId.toString()).emit('task:deleted', task._id);
     }
-
-    res.json({ message: 'Deleted' });
+    else {
+      getIO().to(req.user.id.toString()).emit('task:deleted', task._id);
+    }
+    res.json({ message: 'Task deleted successfully' });
   } catch (err) { next(err); }
 };
 
-/** POST smart‑assign */
+/** POST smart assign task */
 exports.smartAssign = async (req, res, next) => {
   try {
     const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ message: 'Not found' });
-
-    // -------- collect candidates ----------
-    let candidates;
-    if (task.room) {
-      const room = await Room.findById(task.room).select('members');
-      candidates = room ? room.members : [];
-    } else {
-      candidates = [task.createdBy]; // personal board: only owner
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+    
+    // Ensure task is in a room
+    if (!task.roomId) {
+      return res.status(400).json({ message: 'Smart assign can only be done inside a room' });
     }
 
-    // -------- count tasks per candidate ----------
-    const countsAgg = await Task.aggregate([
-      { $match: { room: task.room, status: { $in: ['Todo', 'In Progress'] }, assignedUser: { $in: candidates } } },
-      { $group: { _id: '$assignedUser', count: { $sum: 1 } } }
-    ]);
-    const map = Object.fromEntries(countsAgg.map(c => [c._id.toString(), c.count]));
+   
+    // Fetch all users in that room
+    const room = await Room.findById(task.roomId).populate('members');
+    if (!room) return res.status(404).json({ message: 'Room not found' });
 
-    let leastBusy = candidates[0];
-    let minCount  = map[leastBusy.toString()] || 0;
-    candidates.forEach(c => {
-      const count = map[c.toString()] || 0;
-      if (count < minCount) { minCount = count; leastBusy = c; }
-    });
+    const users = room.members;
+    if (users.length < 2) {
+      return res.status(400).json({ message: 'Smart assign requires at least 2 members in the room' });
+    }
+    // Count tasks for each user
+    const userTaskCounts = await Promise.all(
+      users.map(async (user) => {
+        const count = await Task.countDocuments({ assignedUser: user._id });
+        return { user, count };
+      })
+    );
 
-    // -------- assign ----------
-    task.assignedUser = leastBusy;
-    task.updatedAt    = new Date();
+    const leastBusyUser = userTaskCounts.reduce((min, current) => 
+      current.count < min.count ? current : min
+    );
+
+    task.assignedUser = leastBusyUser.user._id;
     await task.save();
 
-    await ActionLog.create({ actionType: 'smart-assign', task: task._id, user: req.user.id, room: task.room });
-    getIO().to(task.room || req.user.id.toString()).emit('task:updated', task);
+    await ActionLog.create({ 
+      actionType: 'smart-assign', 
+      task: task._id, 
+      user: req.user.id, 
+      room: task.roomId 
+    });
 
-    res.json(task);
+    if (task.roomId) {
+      getIO().to(task.roomId.toString()).emit('task:updated', task);
+    }
+
+    res.json({ message: 'Task smart assigned', assignedTo: leastBusyUser.user.username });
   } catch (err) { next(err); }
 };

@@ -35,10 +35,6 @@ const options = {
         email: 'support@smartsync.com',
         url: 'https://smartsync.com'
       },
-      license: {
-        name: 'MIT',
-        url: 'https://opensource.org/licenses/MIT'
-      },
       termsOfService: 'https://smartsync.com/terms'
     },
     servers: [

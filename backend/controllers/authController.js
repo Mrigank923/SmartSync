@@ -19,7 +19,7 @@ exports.register = async (req, res, next) => {
     // 2.  Hash pwd + generate OTP
     const passwordHash = await bcrypt.hash(password, 10);
     const otpCode      = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires   = Date.now() + 10 * 60 * 1000; // 10 min
+    const otpExpires   = Date.now() + 10 * 60 * 1000; // 10 min
 
     // 3.  Create user
     await User.create({ username, email, passwordHash, otpCode, otpExpires });
@@ -85,6 +85,29 @@ exports.login = async (req, res, next) => {
     res.json({
       token,
       user: { id: user._id, username: user.username, email: user.email }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/auth/me
+ * Headers: Authorization: Bearer <token>
+ */
+exports.getMe = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select('-passwordHash');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.json({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      createdAt: user.createdAt
     });
   } catch (err) {
     next(err);

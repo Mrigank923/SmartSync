@@ -1,0 +1,234 @@
+.action-log {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-height: 600px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  margin-top: 20px;
+}
+
+.action-log h3 {
+  margin-top: 0;
+  color: #007bff;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.action-log ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.action-log li {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.log-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.log-card {
+  display: flex;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #4285f4;
+  transition: transform 0.2s ease;
+}
+
+.log-card:hover {
+  transform: translateX(2px);
+  background-color: #f1f3f4;
+}
+
+.log-icon {
+  font-size: 20px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.log-content {
+  flex: 1;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.log-type {
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: #e0ecff;
+  color: #4285f4;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.log-time {
+  font-size: 12px;
+  color: #707070;
+}
+
+.log-details {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}
+
+.log-additional-details {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.task-title {
+  font-weight: 500;
+  color: #4285f4;
+}
+
+/* Different border colors based on action type */
+.log-card[data-action="CREATE"] {
+  border-left-color: #2e7d32; /* Green */
+}
+
+.log-card[data-action="UPDATE"] {
+  border-left-color: #1565c0; /* Blue */
+}
+
+.log-card[data-action="DELETE"] {
+  border-left-color: #c62828; /* Red */
+}
+
+.log-card[data-action="ASSIGN"] {
+  border-left-color: #f57f17; /* Amber */
+}
+
+.log-card[data-action="SMART_ASSIGN"] {
+  border-left-color: #6a1b9a; /* Purple */
+}
+
+.log-card[data-action="STATUS_CHANGE"] {
+  border-left-color: #283593; /* Indigo */
+}
+
+/* Add icon color variations */
+.log-card[data-action="CREATE"] .log-icon {
+  color: #2e7d32;
+}
+
+.log-card[data-action="UPDATE"] .log-icon {
+  color: #1565c0;
+}
+
+.log-card[data-action="DELETE"] .log-icon {
+  color: #c62828;
+}
+
+.log-card[data-action="ASSIGN"] .log-icon {
+  color: #f57f17;
+}
+
+.log-card[data-action="SMART_ASSIGN"] .log-icon {
+  color: #6a1b9a;
+}
+
+.log-card[data-action="STATUS_CHANGE"] .log-icon {
+  color: #283593;
+}
+
+/* Background hover variations */
+.log-card[data-action="CREATE"]:hover {
+  background-color: #f1f8e9;
+}
+
+.log-card[data-action="UPDATE"]:hover {
+  background-color: #e1f5fe;
+}
+
+.log-card[data-action="DELETE"]:hover {
+  background-color: #ffebee;
+}
+
+.log-card[data-action="ASSIGN"]:hover {
+  background-color: #fffde7;
+}
+
+.log-card[data-action="SMART_ASSIGN"]:hover {
+  background-color: #f3e5f5;
+}
+
+.log-card[data-action="STATUS_CHANGE"]:hover {
+  background-color: #e8eaf6;
+}
+
+/* Type badge colors based on action type */
+.log-card[data-action="CREATE"] .log-type {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.log-card[data-action="UPDATE"] .log-type {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.log-card[data-action="DELETE"] .log-type {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.log-card[data-action="ASSIGN"] .log-type {
+  background-color: #fff8e1;
+  color: #f57f17;
+}
+
+.log-card[data-action="SMART_ASSIGN"] .log-type {
+  background-color: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.log-card[data-action="STATUS_CHANGE"] .log-type {
+  background-color: #e8eaf6;
+  color: #283593;
+}
+
+/* Empty state styling */
+.log-empty-state {
+  padding: 24px;
+  text-align: center;
+  color: #707070;
+  font-style: italic;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px dashed #ddd;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .action-log {
+    padding: 12px;
+  }
+  
+  .log-card {
+    padding: 8px;
+  }
+  
+  .log-icon {
+    font-size: 16px;
+    margin-right: 8px;
+  }
+  
+  .log-details, .log-additional-details {
+    font-size: 12px;
+  }
+}

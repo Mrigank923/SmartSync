@@ -116,7 +116,7 @@ const roomCtrl    = require('../controllers/roomController');
  *           type: string
  *           enum: [member, admin]
  *           default: "member"
- *           description: Role to assign if approving (default: member)
+ *           description: "Role to assign if approving (default: member)"
  *           example: "member"
  */
 
@@ -493,5 +493,56 @@ router.patch('/:id/approve', auth, roomCtrl.approveMember);
  *         description: Internal server error
  */
 router.get('/:id', auth, roomMember, roomCtrl.getRoomDetails);
+
+/**
+ * @swagger
+ * /rooms/members:
+ *   get:
+ *     summary: Get all users for task assignment
+ *     description: |
+ *       Retrieves a list of all users in the system for task assignment purposes.
+ *       
+ *       **Use Cases:**
+ *       - Task assignment dropdown
+ *       - User selection for room invitations
+ *       - Team member lookup
+ *     tags: [Rooms]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of users retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: User ID
+ *                   username:
+ *                     type: string
+ *                     description: Username
+ *                   email:
+ *                     type: string
+ *                     description: Email address
+ *       401:
+ *         description: Unauthorized - invalid token
+ *       500:
+ *         description: Internal server error
+ */
+router.get('/members', auth, roomCtrl.getMembers);
+
+/**
+ * @swagger
+ * /rooms/{id}:
+ *   delete:
+ *     summary: Delete a room (owner only)
+ *     description: |
+ *       Deletes a room permanently. Only the room owner can perform this action.
+ */
+router.delete('/:id', auth, roomCtrl.deleteRoom);
 
 module.exports = router;

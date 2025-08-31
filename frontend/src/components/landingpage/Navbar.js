@@ -1,26 +1,33 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import './Navbar.css';
 
 const Navbar = () => {
-  const { token, setToken } = useContext(AuthContext);
+  const { token, user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    setToken(null);
-    localStorage.removeItem('token');
+    logout();
     navigate('/login');
   };
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">SmartSync</div>
+      <div className="navbar-brand" onClick={() => navigate('/')}>
+        SmartSync
+      </div>
       <div className="navbar-links">
         {token ? (
           <>
             <button onClick={() => navigate('/kanban')}>Board</button>
+            <button onClick={() => navigate('/rooms')}>Rooms</button>
             <button onClick={() => navigate('/logs')}>Logs</button>
+            {user && (
+              <span className="user-info">
+                Welcome, {user.username}!
+              </span>
+            )}
             <button onClick={handleLogout}>Logout</button>
           </>
         ) : (

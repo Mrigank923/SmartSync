@@ -2,6 +2,8 @@
 const express = require('express');
 const router  = express.Router();
 const authCtrl = require('../controllers/authController');
+const auth = require('../middleware/auth'); // Added auth middleware
+const { authLimiter, loginFailureLimiter } = require('../middleware/rateLimiter');
 
 /**
  * @swagger
@@ -209,7 +211,7 @@ const authCtrl = require('../controllers/authController');
  *       500:
  *         description: Internal server error
  */
-router.post('/register',   authCtrl.register);
+router.post('/register', authLimiter, authCtrl.register);
 
 /**
  * @swagger
@@ -380,6 +382,56 @@ router.post('/verify-otp', authCtrl.verifyOtp);
  *       500:
  *         description: Internal server error
  */
-router.post('/login',      authCtrl.login);
+router.post('/login', loginFailureLimiter, authCtrl.login);
+
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Get current user information
+ *     description: |
+ *       Returns the current user's information based on the JWT token.
+ *       
+ *       **Authentication:**
+ *       - Requires valid JWT token in Authorization header
+ *       - Token format: `Bearer <jwt-token>`
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User information retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: User ID
+ *                 username:
+ *                   type: string
+ *                   description: Username
+ *                 email:
+ *                   type: string
+ *                   description: Email address
+ *                 emailVerified:
+ *                   type: boolean
+ *                   description: Whether email is verified
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Account creation date
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *       404:
+ *         description: User not found
+ */
+router.get('/me', auth, authCtrl.getMe);
+
+// Additional routes with rate limiting
+// router.post('/refresh-token', authLimiter, authCtrl.refreshToken);
+// router.post('/forgot-password', authLimiter, authCtrl.forgotPassword);
+// router.post('/reset-password', authLimiter, authCtrl.resetPassword);
 
 module.exports = router;

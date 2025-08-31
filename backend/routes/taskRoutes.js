@@ -424,4 +424,63 @@ router.delete('/:id',       auth, taskCtrl.deleteTask);
  */
 router.post('/:id/smart-assign', auth, taskCtrl.smartAssign);
 
+/**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     summary: Get all tasks (personal or room-based)
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: roomId
+ *         schema:
+ *           type: string
+ *         description: Room ID to filter tasks (optional)
+ *     responses:
+ *       200:
+ *         description: List of tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Task'
+ *       401:
+ *         description: Unauthorized - invalid token
+ *       500:
+ *         description: Internal server error
+ *   post:
+ *     summary: Create a new task
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateTaskRequest'
+ *     responses:
+ *       201:
+ *         description: Task created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Bad request - validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized - invalid token
+ *       500:
+ *         description: Internal server error
+ */
+router.get('/', auth, taskCtrl.getTasks);
+router.post('/', auth, taskCtrl.createTask);
+
 module.exports = router;

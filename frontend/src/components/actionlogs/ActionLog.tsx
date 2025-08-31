@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
-import api from '../services/api';
-import { socket } from '../services/socket';
-import { RoomContext } from '../context/RoomContext';
+import api from '../../services/api';
+import { socket } from '../../services/socket';
+import { RoomContext } from '../../context/RoomContext';
 import './ActionLog.css';
 
 /* ------------ Types ---------------- */
