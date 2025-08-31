@@ -1,0 +1,350 @@
+.room-manager {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.room-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.room-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.create-btn, .join-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.create-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.create-btn:hover {
+  background: #45a049;
+}
+
+.join-btn {
+  background: #2196F3;
+  color: white;
+}
+
+.join-btn:hover {
+  background: #1976D2;
+}
+
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.room-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.room-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.room-info h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.room-info p {
+  color: #666;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+}
+
+.room-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.room-meta span {
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.room-card .room-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.leave-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.3s;
+}
+
+.leave-btn:hover {
+  background: #d32f2f;
+}
+
+.enter-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.enter-btn:hover {
+  background-color: #45a049;
+}
+
+/* Modal styles (reusing from TaskModal) */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.modal-content h3 {
+  margin: 0 0 20px 0;
+  color: #333;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.form-group label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: #999;
+  transition: all 0.3s;
+  pointer-events: none;
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label,
+.form-group textarea:focus + label,
+.form-group textarea:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 8px;
+  font-size: 12px;
+  color: #4CAF50;
+  background: white;
+  padding: 0 4px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.modal-actions button:first-child {
+  background: #4CAF50;
+  color: white;
+}
+
+.modal-actions button:first-child:hover {
+  background: #45a049;
+}
+
+.cancel-btn {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.cancel-btn:hover {
+  background: #e0e0e0;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.no-rooms-message {
+  width: 100%;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-state {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 30px;
+  border: 1px dashed #ccc;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.empty-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.empty-state p {
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Add these styles to your RoomManager.css file */
+
+.pending-requests-section {
+  margin-top: 30px;
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.pending-requests-section h3 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.room-requests {
+  margin-bottom: 20px;
+}
+
+.room-requests h4 {
+  margin: 0 0 10px 0;
+  color: #555;
+}
+
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.request-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+}
+
+.username {
+  font-weight: 500;
+}
+
+.request-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.approve-btn, .reject-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.approve-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.approve-btn:hover {
+  background-color: #45a049;
+}
+
+.reject-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.reject-btn:hover {
+  background-color: #d32f2f;
+}

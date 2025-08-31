@@ -1,70 +1,127 @@
-# Getting Started with Create React App
+# SmartSync Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern React-based frontend for the SmartSync task management application.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **User Authentication**: Register, login, and email verification with OTP
+- **Task Management**: Create, edit, delete, and drag-and-drop tasks
+- **Room Management**: Create and join collaborative rooms
+- **Real-time Updates**: Socket.IO integration for live updates
+- **Responsive Design**: Modern UI with mobile-friendly layout
+- **Conflict Resolution**: Handle concurrent task updates
 
-### `npm start`
+## Setup
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. **Environment Configuration**:
+   Create a `.env` file in the frontend directory:
+   ```
+   REACT_APP_API_URL=http://localhost:5001/api
+   REACT_APP_SOCKET_URL=http://localhost:5001
+   ```
 
-### `npm test`
+3. **Start Development Server**:
+   ```bash
+   npm start
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## API Integration
 
-### `npm run build`
+The frontend is now fully integrated with the backend API:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/verify-otp` - Email verification
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Tasks
+- `GET /api/tasks` - Get all tasks (with room filtering)
+- `POST /api/tasks` - Create new task
+- `PUT /api/tasks/:id` - Update task
+- `DELETE /api/tasks/:id` - Delete task
+- `POST /api/tasks/:id/smart-assign` - Smart assign task
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Rooms
+- `GET /api/rooms` - Get user's rooms
+- `POST /api/rooms` - Create new room
+- `POST /api/rooms/join` - Join room
+- `DELETE /api/rooms/:id/leave` - Leave room
 
-### `npm run eject`
+## Key Changes Made
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 1. Updated API Service
+- Changed base URL to use localhost for development
+- Added automatic token handling
+- Added 401 error handling with automatic logout
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 2. Enhanced Authentication
+- Updated AuthContext with proper user management
+- Added loading states and error handling
+- Improved token management
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3. Task Management
+- Updated task model to match backend structure
+- Added room support for tasks
+- Enhanced task cards with better UI
+- Added room filtering in Kanban board
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 4. Room Management
+- New RoomManager component for creating/joining rooms
+- Room filtering in task management
+- Room-based task organization
 
-## Learn More
+### 5. UI Improvements
+- Modern, responsive design
+- Better loading states
+- Improved error handling with toast notifications
+- Enhanced navigation with protected routes
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Component Structure
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+src/
+├── components/
+│   ├── Auth/
+│   │   ├── Login.js
+│   │   ├── Register.js
+│   │   └── VerifyOtp.js
+│   ├── KanbanBoard.js
+│   ├── TaskCard.js
+│   ├── TaskModal.js
+│   ├── RoomManager.js
+│   ├── Navbar.js
+│   └── Toast.js
+├── context/
+│   └── AuthContext.js
+├── services/
+│   ├── api.js
+│   └── socket.js
+└── App.js
+```
 
-### Code Splitting
+## Usage
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+1. **Register/Login**: Users can register with email verification or login directly
+2. **Create Rooms**: Users can create collaborative rooms for team tasks
+3. **Manage Tasks**: Create, edit, and organize tasks in a Kanban board
+4. **Room Filtering**: Switch between personal tasks and room tasks
+5. **Real-time Updates**: See changes from other users in real-time
 
-### Analyzing the Bundle Size
+## Development
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+The frontend uses:
+- React 18 with hooks
+- React Router for navigation
+- Axios for API calls
+- Socket.IO for real-time updates
+- CSS modules for styling
 
-### Making a Progressive Web App
+## Backend Requirements
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Make sure your backend is running on `http://localhost:5001` and has all the required endpoints implemented as documented in the backend routes.

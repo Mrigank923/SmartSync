@@ -1,0 +1,180 @@
+.task-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: grab;
+  transition: all 0.3s ease;
+  border-left: 4px solid #ddd;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.task-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  flex: 1;
+  margin-right: 10px;
+}
+
+.task-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.priority-badge {
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.priority-badge.priority-high {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.priority-badge.priority-medium {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.priority-badge.priority-low {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+.status-badge {
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.status-badge.status-todo {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.status-badge.status-in-progress {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.status-badge.status-done {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+.description {
+  color: #666;
+  font-size: 14px;
+  margin: 10px 0;
+  line-height: 1.4;
+}
+
+.task-meta {
+  margin: 10px 0;
+  font-size: 12px;
+  color: #888;
+}
+
+.task-meta p {
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.assigned-user, .room-info, .created-date {
+  font-size: 11px;
+  color: #666;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+.card-actions button {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Edit button styling */
+.card-actions button:nth-child(1) {
+  background-color: #e3f2fd;
+  border-color: #bbdefb;
+  color: #1565c0;
+}
+
+.card-actions button:nth-child(1):hover {
+  background-color: #bbdefb;
+  border-color: #90caf9;
+}
+
+/* Smart assign button styling (middle button when present) */
+.card-actions button:nth-child(2):not(:last-child) {
+  background-color: #e8f5e9;
+  border-color: #c8e6c9;
+  color: #2e7d32;
+}
+
+.card-actions button:nth-child(2):not(:last-child):hover {
+  background-color: #c8e6c9;
+  border-color: #a5d6a7;
+}
+
+/* Delete button styling (last button) */
+.card-actions button:last-child {
+  background-color: #ffebee;
+  border-color: #ffcdd2;
+  color: #c62828;
+}
+
+.card-actions button:last-child:hover {
+  background-color: #ffcdd2;
+  border-color: #ef9a9a;
+}
+
+/* Priority border colors */
+.task-card.priority-high {
+  border-left-color: #f44336;
+}
+
+.task-card.priority-medium {
+  border-left-color: #ff9800;
+}
+
+.task-card.priority-low {
+  border-left-color: #4caf50;
+}

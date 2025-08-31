@@ -1,23 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import './AuthForms.css';
 import Toast from '../Toast';
 
 const VerifyOtp = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const inputsRef = useRef([]);
   const navigate = useNavigate();
   const [toast, setToast] = useState(null);
+  const { setToken, setUser } = useAuth();
 
   useEffect(() => {
     const storedEmail = localStorage.getItem('pendingEmail');
+    const storedPassword = localStorage.getItem('pendingPassword');
     if (!storedEmail) {
       setToast({ message: 'No pending email found. Please register again.', type: 'error' });
       navigate('/register');
     } else {
       setEmail(storedEmail);
+      if (storedPassword) {
+        setPassword(storedPassword);
+      }
     }
   }, [navigate]);
 
@@ -39,20 +47,39 @@ const VerifyOtp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const finalOtp = otp.join('');
+      
+      // First, verify the OTP
       await api.post('/auth/verify-otp', { email, otp: finalOtp });
-      setToast({ message: 'Email verified! Please login.', type: 'success' });
+      
+      // Then, automatically login the user
+      const loginResponse = await api.post('/auth/login', { email, password });
+      
+      // Set authentication state
+      setToken(loginResponse.data.token);
+      setUser(loginResponse.data.user);
+      
+      // Clean up stored data
       localStorage.removeItem('pendingEmail');
-      navigate('/login');
+      localStorage.removeItem('pendingPassword');
+      
+      setToast({ message: 'Email verified and logged in successfully!', type: 'success' });
+      setTimeout(() => navigate('/kanban'), 1500);
     } catch (err) {
-      setToast({ message: err.response?.data?.message || 'OTP verification failed', type: 'error' });
+      setToast({ 
+        message: err.response?.data?.message || 'Verification failed', 
+        type: 'error' 
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="auth-container">
-        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <h2>Verify Your Email</h2>
       <p className="otp-email">Sent to: <strong>{email}</strong></p>
       <form className="auth-form" onSubmit={handleSubmit}>
@@ -67,10 +94,13 @@ const VerifyOtp = () => {
               onChange={e => handleChange(idx, e.target.value)}
               onKeyDown={e => handleKeyDown(idx, e)}
               required
+              disabled={loading}
             />
           ))}
         </div>
-        <button type="submit">Verify</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Verifying & Logging in...' : 'Verify & Login'}
+        </button>
       </form>
     </div>
   );
